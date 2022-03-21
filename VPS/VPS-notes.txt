@@ -200,10 +200,61 @@ start "" ssh root@137.184.25.70
 -> enter name -> ok, ok, apply, ok
 
 
+# hosting Django website
+# Note: for running development server on port 8000, we must first open that port by
+sudo iptables -A INPUT -p tcp --dport 8000 -j ACCEPT
+# during ip port config i reasearched about many cmds
+# to list iptable
+sudo iptables -L
+# to get specific port rule
+sudo iptables -nL | grep 8000
+# to see listening ports
+netstat -tulpan 
 
 
+# created MAC folder in /var/www/
+# created virtual env inside MAC as env
+# make MAC and env dire own as user to access properly
+# install django
+# go to /etc/appache/sites-configuration and create file mac.conf and add text abouve error as shown below
+`Alias /static /var/www/djangomac/static
+    <Directory /var/www/djangomac/static>
+        Require all granted
+    </Directory>
+	
+	<Directory /var/www/djangomac/djangomacproj>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
 
+    WSGIDaemonProcess djangomac python-path=/var/www/djangomac python-home=/var/www/djangomac/djangomac
+    WSGIProcessGroup djangomac
+    WSGIScriptAlias / /var/www/djangomac/djangomacproj/wsgi.py`
 
+# activate that conf file
+sudo a2ensite mac.conf
+#deactivate all other 
+
+# now add project file from git to MAC
+# dir should be like var/www/MAC/  ls
+shop paytm ... env ... mac manage.py ...
+# go in settings.py and add 
+STATIC_ROOT = os.path.join(BASE_URL, "static/")
+ALLOWED_HOST = ["137.184.25.70"]
+# if templates error occur then, 
+TEMPLATE = {
+	...
+	DIRS : ["/var/www/MAC/mac/templates"]
+	...
+}
+
+# to avoid permission issues, go to var/www
+sudo chmod 664 MAC/db.sqlite3
+sudo chown :www-data MAC/db.sqlite3
+sudo chown :www-data MAC/
+
+# for more practice -> https://chmod-calculator.com/
 
 
 
